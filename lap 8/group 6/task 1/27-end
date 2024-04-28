@@ -1,0 +1,76 @@
+Step 27: Configure Loopback Interfaces
+
+R_X(config)#
+interface Loopback1
+R_X(config-if)#
+ip address 192.168.6.1 255.255.255.192
+R_X(config-if)#
+no shutdown
+
+R_X(config)#
+interface Loopback3
+R_X(config-if)#
+ip address 192.168.6.129 255.255.255.192
+R_X(config-if)#
+no shutdown
+
+
+Step 28: Configure Static Routes
+Set Default Gateway Toward Loopback1:
+
+R_X(config)#
+ip route 0.0.0.0 0.0.0.0 Loopback1
+
+Static Routes for PC Networks and Simulated Networks:
+
+R_X(config)#
+ip route 10.108.128.0 255.255.252.0 172.16.6.61
+R_X(config)#
+ip route 10.108.128.0 255.255.252.0 172.16.6.62
+R_X(config)#
+ip route 192.168.6.64 255.255.255.192 Loopback1
+R_X(config)#
+ip route 192.168.6.192 255.255.255.192 192.168.6.130
+
+Step 29: Add Loopback Networks to OSPF
+router ospf 6
+R_X(config-router)#
+network 192.168.6.0 0.0.0.255 area 0
+R_X(config-router)#
+network 192.168.6.128 0.0.0.127 area 0
+
+Verification on Neighbor Router (R_Y):
+Log into R_Y and check the OSPF routes:
+PC_X> telnet R_Y_address 10.6.7.2
+R_Y#show ip route
+R_Y#ping 192.168.X.1
+R_Y#ping 192.168.X.129
+
+
+Step 30: Enable Propagation of Static Routes into OSPF
+Redistribute Static Routes:
+
+router ospf 6
+
+R_X(config-router)#
+redistribute static subnets
+
+Check Propagation:
+Verify on neighboring routers if the static routes are now visible:
+R_Y#show ip route
+Note which routes are visible and the metrics used.
+
+Step 31: Propagate Default Gateway in OSPF
+Enable Default Information Originate:
+router ospf 6
+R_X(config-router)#
+default-information originate
+
+Remove and Verify Default Route on Neighbor:
+On R_Y, temporarily remove the existing default route to see if OSPF default is received:
+
+R_Y(config)#no ip route 0.0.0.0 0.0.0.0
+R_Y#show ip route
+
+Check if the default route from R_X is now present in R_Y’s routing table. Re-add local default route after verification:
+R_Y(config)#ip route 0.0.0.0 0.0.0.0 Loopback1

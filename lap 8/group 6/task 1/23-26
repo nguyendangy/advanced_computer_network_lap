@@ -1,0 +1,41 @@
+Before Setting Passive:
+show ip ospf interface FastEthernet0/0
+
+
+Set the Interface to Passive Mode:
+router ospf 6
+passive-interface FastEthernet0/0
+
+
+After Setting Passive:
+show ip ospf interface FastEthernet0/0
+show ip protocols
+
+Step 24: Check Network Visibility on Neighboring Routers
+Check from a Neighbor Router:
+show ip ospf neighbor
+show ip route
+
+Step 25: Set All Interfaces to Passive Mode and Verify Network Impact
+router ospf 6
+passive-interface default
+show ip ospf interface
+
+
+
+Check Network Availability from Neighbor Router:
+10.X.Y.2
+10.6.7.2
+show ip route
+show ip ospf neighbor
+
+
+26: 
+router ospf 6
+no passive-interface default
+
+Check Network Availability from Neighbor Router:
+10.X.Y.2
+10.6.7.2
+show ip route
+show ip ospf neighbor

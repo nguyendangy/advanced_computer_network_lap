@@ -1,0 +1,18 @@
+32
+R_X#show ip protocols
+R_X#show ip ospf
+R_X#show ip ospf interface brief
+R_X#show ip ospf interface
+Save the print results of commands into the notepad.
+
+
+33
+show ip ospf database network
+
+Step 34: Set OSPF Debugging
+R_X#debug ip ospf adj
+R_X#debug ip ospf events
+Step 35: Analyze OSPF Message Exchange
+R_X(config)#interface [interface-id]
+R_X(config-if)#shutdown
+R_X(config-if)#no shutdown
