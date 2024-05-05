@@ -1,0 +1,128 @@
+13.
+R_X(config)#router ospf X
+R_X(config-router)#no passive-interface Fa 0/0
+14
+R_X(config)#ip route 0.0.0.0 0.0.0.0 Lo 0
+15
+R_X#show ip ospf neighbor
+
+R_6#show ip ospf neighbor
+
+
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+7.7.7.7           1   FULL/BDR        00:00:31    172.16.0.70     FastEthernet0/0
+1.1.1.1           1   FULL/DROTHER    00:00:32    172.16.0.10     FastEthernet0/0
+1.1.1.1           0   FULL/  -        00:00:32    10.1.6.1        Serial0/1/1
+7.7.7.7           0   FULL/  -        00:00:31    10.6.7.2        Serial0/0/0
+
+16
+R_6#show ip route ospf
+     192.168.1.0/32 is subnetted, 1 subnets
+O       192.168.1.1 [110/1002] via 172.16.0.10, 00:34:39, FastEthernet0/0
+     192.168.7.0/32 is subnetted, 1 subnets
+O       192.168.7.7 [110/1002] via 172.16.0.70, 00:34:39, FastEthernet0/0
+17
+show ip ospf database
+R_6#show ip ospf database
+            OSPF Router with ID (6.6.6.6) (Process ID 6)
+
+                Router Link States (Area 0)
+
+Link ID         ADV Router      Age         Seq#       Checksum Link count
+6.6.6.6         6.6.6.6         859         0x8000000e 0x0098db 6
+7.7.7.7         7.7.7.7         859         0x80000009 0x00bdee 4
+1.1.1.1         1.1.1.1         45          0x80000008 0x00ac86 4
+
+                Net Link States (Area 0)
+Link ID         ADV Router      Age         Seq#       Checksum
+172.16.0.60     6.6.6.6         45          0x80000005 0x00d832
+
+18. Set OSPF debugging.
+R_X#debug ip ospf events
+
+19
+
+R_X(config)#interface FastEthernet0/0
+R_X(config-if)#shutdown
+
+R_X(config-if)#no shutdown
+
+R_X#show ip ospf interface FastEthernet0/0
+show ip ospf interface FastEthernet0/0
+
+FastEthernet0/0 is up, line protocol is up
+  Internet address is 172.16.0.60/24, Area 0
+  Process ID 6, Router ID 6.6.6.6, Network Type BROADCAST, Cost: 1001
+  Transmit Delay is 1 sec, State WAITING, Priority 1
+  No designated router on this network
+  No backup designated router on this network
+  Timer intervals configured, Hello 10, Dead 40, Wait 40, Retransmit 5
+    Hello due in 00:00:05
+  Index 4/4, flood queue length 0
+  Next 0x0(0)/0x0(0)
+  Last flood scan length is 1, maximum is 1
+  Last flood scan time is 0 msec, maximum is 0 msec
+  Neighbor Count is 0, Adjacent neighbor count is 0
+  Suppress hello for 0 neighbor(s)
+R_X#show ip ospf neighbor
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+1.1.1.1           0   FULL/  -        00:00:32    10.1.6.1        Serial0/1/1
+7.7.7.7           0   FULL/  -        00:00:31    10.6.7.2        Serial0/0/0
+
+
+20
+show ip ospf neighbor
+
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+7.7.7.7           1   FULL/DR         00:00:38    172.16.0.70     FastEthernet0/0
+1.1.1.1           1   FULL/BDR        00:00:38    172.16.0.10     FastEthernet0/0
+1.1.1.1           0   FULL/  -        00:00:38    10.1.6.1        Serial0/1/1
+7.7.7.7           0   FULL/  -        00:00:37    10.6.7.2        Serial0/0/0
+
+21
+Routers with the highest OSPF priority on a segment are elected DR and BDR. If priorities are equal, the router with the highest Router ID is chosen.
+Validate these roles through show ip ospf neighbor.
+
+Step 22: Delete Manually Assigned OSPF Router IDs
+R_X(config)#router ospf X
+R_X(config-router)#no router-id
+R_X(config-router)#clear ip ospf process
+Step 23: Force DR and BDR Election Process Again
+R_X(config-if)#interface Fa 0/0
+R_X(config-if)#shutdown
+R_X(config-if)#no shutdown
+show ip ospf interface
+Step 24: Display and Analyze OSPF Neighbor Table Again
+R_X#show ip ospf neighbor
+Purpose: To note the roles of each router post-reconfiguration.
+Step 25: Identify Newly Elected DR and BDR Routers
+Understand why certain routers were elected based on their OSPF priority and Router ID after the reset.
+
+Step 26: Set OSPF Priority to 100 for One of the DROTHER Routers
+R_X(config-if)#interface Fa 0/0
+R_X(config-if)#ip ospf priority 100
+Purpose: To attempt to make a specific DROTHER router the DR.
+
+Step 27: Simulate DR Router Failure
+R_X(config-if)#interface Fa 0/0
+R_X(config-if)#shutdown
+
+Physically disconnect or administratively shut down the interface of the current DR router.
+Observe the re-election process and note the new DR.
+
+Step 28: Restore Connections
+
+Re-enable the interface and observe if the original DR regains its role.
+
+R_X(config-if)#no shutdown
+Step 29: Change OSPF Router Priorities
+R_X(config-if)#ip ospf priority [value]
+Step 30: Force Another DR and BDR Election Process
+Reset the interfaces to trigger OSPF elections.
+R_X(config-if)#shutdown
+R_X(config-if)#no shutdown
+Step 31: Change OSPF Router Priorities Again
+Adjust OSPF priorities to influence specific roles in the network.
+R_X(config-if)#ip ospf priority [value]
+Step 32: Final Check on Roles after Adjustments
+R_X#show ip ospf neighbor

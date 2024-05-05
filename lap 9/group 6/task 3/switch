@@ -1,0 +1,5 @@
+5.
+Switch(config)#sdm prefer dual-ipv4-and-ipv6 default
+Switch(config)#exit
+Switch#copy run start
+Switch#reload

@@ -1,0 +1,275 @@
+19. Check and save the default bandwidth configured on the router interfaces.
+ Use the command:
+sh interface Fa 0/0
+Show
+-------
+FastEthernet0/0 is up, line protocol is up (connected)
+  Hardware is Lance, address is 0001.4304.0901 (bia 0001.4304.0901)
+  Internet address is 172.16.0.60/24
+  MTU 1500 bytes, BW 100000 Kbit, DLY 100 usec,
+     reliability 255/255, txload 1/255, rxload 1/255
+  Encapsulation ARPA, loopback not set
+  Full-duplex, 100Mb/s, media type is RJ45
+  ARP type: ARPA, ARP Timeout 04:00:00, 
+  Last input 00:00:08, output 00:00:05, output hang never
+  Last clearing of "show interface" counters never
+  Input queue: 0/75/0 (size/max/drops); Total output drops: 0
+  Queueing strategy: fifo
+  Output queue :0/40 (size/max)
+  5 minute input rate 64 bits/sec, 0 packets/sec
+  5 minute output rate 57 bits/sec, 0 packets/sec
+     362 packets input, 22157 bytes, 0 no buffer
+     Received 0 broadcasts, 0 runts, 0 giants, 0 throttles
+     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort
+     0 input packets with dribble condition detected
+     222 packets output, 15580 bytes, 0 underruns
+     0 output errors, 0 collisions, 1 interface resets
+     0 babbles, 0 late collision, 0 deferred
+---------
+sh interface Ser 0/0/0
+
+Serial0/0/0 is up, line protocol is up (connected)
+  Hardware is HD64570
+  Internet address is 10.6.7.1/30
+  MTU 1500 bytes, BW 1544 Kbit, DLY 20000 usec,
+     reliability 255/255, txload 1/255, rxload 1/255
+  Encapsulation HDLC, loopback not set, keepalive set (10 sec)
+  Last input never, output never, output hang never
+  Last clearing of "show interface" counters never
+  Input queue: 0/75/0 (size/max/drops); Total output drops: 0
+  Queueing strategy: weighted fair
+  Output queue: 0/1000/64/0 (size/max total/threshold/drops)
+     Conversations  0/0/256 (active/max active/max total)
+     Reserved Conversations 0/0 (allocated/max allocated)
+     Available Bandwidth 1158 kilobits/sec
+  5 minute input rate 54 bits/sec, 0 packets/sec
+  5 minute output rate 54 bits/sec, 0 packets/sec
+     170 packets input, 12744 bytes, 0 no buffer
+     Received 0 broadcasts, 0 runts, 0 giants, 0 throttles
+     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort
+     224 packets output, 15984 bytes, 0 underruns
+     0 output errors, 0 collisions, 1 interface resets
+     0 output buffer failures, 0 output buffers swapped out
+     0 carrier transitions
+     DCD=up  DSR=up  DTR=up  RTS=up  CTS=up
+------------
+20. Check and save the OSPF costs of router interfaces. Use the command:
+
+R_6#sh ip ospf interface fastEthernet 0/0
+
+FastEthernet0/0 is up, line protocol is up
+  Internet address is 172.16.0.60/24, Area 0
+  Process ID 6, Router ID 6.6.6.6, Network Type BROADCAST, Cost: 1
+  Transmit Delay is 1 sec, State DR, Priority 1
+  Designated Router (ID) 6.6.6.6, Interface address 172.16.0.60
+  Backup Designated Router (ID) 7.7.7.7, Interface address 172.16.0.70
+  Timer intervals configured, Hello 10, Dead 40, Wait 40, Retransmit 5
+    Hello due in 00:00:09
+  Index 1/1, flood queue length 0
+  Next 0x0(0)/0x0(0)
+  Last flood scan length is 1, maximum is 1
+  Last flood scan time is 0 msec, maximum is 0 msec
+  Neighbor Count is 2, Adjacent neighbor count is 2
+    Adjacent with neighbor 7.7.7.7  (Backup Designated Router)
+    Adjacent with neighbor 1.1.1.1
+  Suppress hello for 0 neighbor(s)
+
+  --------
+  R_6#sh ip ospf interface ser 0/0/0
+
+Serial0/0/0 is up, line protocol is up
+  Internet address is 10.6.7.1/30, Area 0
+  Process ID 6, Router ID 6.6.6.6, Network Type POINT-TO-POINT, Cost: 64
+  Transmit Delay is 1 sec, State POINT-TO-POINT,
+  Timer intervals configured, Hello 10, Dead 40, Wait 40, Retransmit 5
+    Hello due in 00:00:07
+  Index 3/3, flood queue length 0
+  Next 0x0(0)/0x0(0)
+  Last flood scan length is 1, maximum is 1
+  Last flood scan time is 0 msec, maximum is 0 msec
+  Neighbor Count is 1 , Adjacent neighbor count is 1
+    Adjacent with neighbor 7.7.7.7
+  Suppress hello for 0 neighbor(s)
+
+  -----
+
+  21. Check and save the OSPF metrics of remote networks in the routing table.
+  R_6#sh ip route ospf
+     192.168.1.0/32 is subnetted, 1 subnets
+O       192.168.1.1 [110/2] via 172.16.0.10, 00:18:04, FastEthernet0/0
+     192.168.7.0/32 is subnetted, 1 subnets
+O       192.168.7.7 [110/2] via 172.16.0.70, 00:28:27, FastEthernet0/0
+----------
+22. Set the bandwidth on the Serial interfaces to match their actual speed (clock rate). 
+Use the command:
+R_X#conf t
+R_X(config)#interface Serial0/0/0
+R_X(config-if)#bandwidth 1544  # Assuming 1544 kb/s 
+R_X(config-if)#end
+23. 
+R_X#conf t
+R_X(config)#interface Fa 0/0
+R_X(config-if)#bandwidth 10000
+R_X(config-if)#end
+24
+check and show 
+R_6#sh ip ospf interface Fa 0/0
+
+FastEthernet0/0 is up, line protocol is up
+  Internet address is 172.16.0.60/24, Area 0
+  Process ID 6, Router ID 6.6.6.6, Network Type BROADCAST, Cost: 10
+  Transmit Delay is 1 sec, State DR, Priority 1
+  Designated Router (ID) 6.6.6.6, Interface address 172.16.0.60
+  Backup Designated Router (ID) 7.7.7.7, Interface address 172.16.0.70
+  Timer intervals configured, Hello 10, Dead 40, Wait 40, Retransmit 5
+    Hello due in 00:00:09
+  Index 1/1, flood queue length 0
+  Next 0x0(0)/0x0(0)
+  Last flood scan length is 1, maximum is 1
+  Last flood scan time is 0 msec, maximum is 0 msec
+  Neighbor Count is 2, Adjacent neighbor count is 2
+    Adjacent with neighbor 7.7.7.7  (Backup Designated Router)
+    Adjacent with neighbor 1.1.1.1
+  Suppress hello for 0 neighbor(s)
+  R_6#sh ip ospf interface Ser0/0/0
+---------
+Serial0/0/0 is up, line protocol is up
+  Internet address is 10.6.7.1/30, Area 0
+  Process ID 6, Router ID 6.6.6.6, Network Type POINT-TO-POINT, Cost: 64
+  100000000/ 1544000 = 64
+  Transmit Delay is 1 sec, State POINT-TO-POINT,
+  Timer intervals configured, Hello 10, Dead 40, Wait 40, Retransmit 5
+    Hello due in 00:00:09
+  Index 3/3, flood queue length 0
+  Next 0x0(0)/0x0(0)
+  Last flood scan length is 1, maximum is 1
+  Last flood scan time is 0 msec, maximum is 0 msec
+  Neighbor Count is 1 , Adjacent neighbor count is 1
+    Adjacent with neighbor 7.7.7.7
+  Suppress hello for 0 neighbor(s)
+-----------
+25. 
+sh ip route ospf
+R_6#sh ip route ospf
+     192.168.1.0/32 is subnetted, 1 subnets
+O       192.168.1.1 [110/11] via 172.16.0.10, 00:03:18, FastEthernet0/0
+     192.168.7.0/32 is subnetted, 1 subnets
+O       192.168.7.7 [110/11] via 172.16.0.70, 00:03:18, FastEthernet0/0
+##--------
+The increase in the metric from 2 to 11 for both routes suggests that there has been a significant change in the cost calculation, 
+likely due to a manual adjustment in the bandwidth of the FastEthernet0/0 interface. As seen in previous tasks, 
+changing the bandwidth setting from 100 Mbps to 10 Mbps on FastEthernet0/0 would increase the OSPF cost for routes using this interface.
+OSPF calculates the route cost based on the formula cost = 100,000,000 / bandwidth_in_bps. 
+When the bandwidth was set higher (100 Mbps), the calculated cost was lower, leading to a metric of 2. 
+Reducing the bandwidth to 10 Mbps increases the cost and thereby the metric to 11.
+
+
+
+sh run
+hostname R_6
+!
+!
+!
+enable password class
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.6.6 255.255.255.255
+!
+interface FastEthernet0/0
+ bandwidth 10000
+ ip address 172.16.0.60 255.255.255.0
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Serial0/0/0
+ ip address 10.6.7.1 255.255.255.252
+ clock rate 64000
+!
+interface Serial0/0/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial0/1/0
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial0/1/1
+ ip address 10.1.6.2 255.255.255.252
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router ospf 6
+ router-id 6.6.6.6
+ log-adjacency-changes
+ network 172.16.0.0 0.0.0.255 area 0
+ network 10.1.6.0 0.0.0.3 area 0
+ network 10.6.7.0 0.0.0.3 area 0
+ network 192.168.6.6 0.0.0.0 area 0
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+!
+banner motd ^CGroup L welcome. Unauthorized access to this device is strongly prohibited!^^C
+!
+!
+!
+!
+!
+line con 0
+ password cisco
+ login
+!
+line aux 0
+!
+line vty 0 4
+ password cisco
+ logging synchronous
+ login
+line vty 5 15
+ password cisco
+ logging synchronous
+ login
+!
+!
+!
+end
