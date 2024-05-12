@@ -1,0 +1,11 @@
+ Check the correctness of connections in the basic network topology. Add additional cable connections
+required in the exercise.
+S_K port Fa 0/19 connect to S_L port Fa 0/20
+S_L port Fa 0/19 connect to S_M port Fa 0/20
+
+6:
+R_L#show ip interface brief
+
+7 check
+10
+R_X#show ip route
