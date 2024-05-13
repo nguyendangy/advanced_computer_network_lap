@@ -107,3 +107,30 @@ line vty 5 15
 !
 !
 end
+
+
+question? step 24
+
+image task 1
+
+1. What Address are RIP Messages Sent To?
+RIPv1 messages are broadcasted using the address 255.255.255.255. This is the general broadcast address, indicating that messages are sent to all devices on the local network segment.
+
+2. What Network Mask Does the Protocol Set for Propagated Networks?
+RIPv1 does not include subnet mask information in its updates. Instead, it assumes that all devices on the network segment use the same subnet mask based on the class of the IP addresses (Class A, B, or C). This is a limitation of RIPv1, which does not support Variable Length Subnet Masking (VLSM).
+
+3. What RIP Protocol Version is Used for Sending Messages?
+The messages in the debug log are sent using RIP version 1, as indicated by references to "RIPv1" in the update messages.
+
+Extracted Information from the Routing Table:
+What Administrative Distance Does RIP Have?
+
+The administrative distance for RIP routes is typically set to 120. This value represents the trustworthiness of the routing information provided by RIP compared to other routing protocols.
+
+What are the Metrics Values?
+
+In the provided log, the metric values for the networks are all set to 1. The metric in RIP represents the number of hops to the destination network, and the maximum number of hops allowed is 15, beyond which the network is considered unreachable.
+
+How is the Network Metric Determined?
+
+The metric for a network in RIP is determined by counting the number of router hops between the source and the destination. Each time a routing update passes through a router, the metric is incremented by 1. Therefore, the metric provides a simple measure of distance to the destination network in terms of hop count. In your debug output, the metric increases by one hop as the update is received from a neighboring router, starting from a metric of 1 when the network is directly connected

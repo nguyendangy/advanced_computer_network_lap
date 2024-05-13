@@ -139,3 +139,34 @@ line vty 5 15
 !
 !
 end
+
+
+
+question step 17
+Start the dubug proces for the RIP.
+Write down the following information:
+To what address are the RIPv2 messages sent?
+What masks are assigned to the network?
+How are networks from Loopback interfaces propagated?
+
+1. To What Address Are the RIPv2 Messages Sent?
+RIPv2 messages are sent to the multicast address 224.0.0.9.
+
+2. What Masks Are Assigned to the Network?
+10.0.0.0/8
+172.16.0.0/16
+172.16.22.0/24
+172.16.21.0/24
+10.1.2.0/30
+10.2.3.0/30
+3. How Are Networks from Loopback Interfaces Propagated?
+Networks from Loopback interfaces are propagated in the routing updates with their respective metrics:
+
+Loopback1 (172.16.21.20):
+10.0.0.0/8, metric 1
+172.16.0.0/16, metric 2
+172.16.22.0/24, metric 1
+Loopback2 (172.16.22.20):
+10.0.0.0/8, metric 1
+172.16.0.0/16, metric 2
+172.16.21.0/24, metric 1
