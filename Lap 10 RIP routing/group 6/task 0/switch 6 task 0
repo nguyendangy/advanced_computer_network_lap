@@ -13,6 +13,8 @@ fc00:L::L0
 bao gom ipv6 duoc mo
 
 sdm prefer dual-ipv4-and-ipv6 default
+exit
+reload
 
 hostname S_6
 !
