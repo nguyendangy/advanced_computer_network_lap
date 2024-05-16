@@ -1,0 +1,42 @@
+step 12
+
+ip route 192.168.7.64 255.255.255.192 Loopback 1
+ip route 192.168.7.192 255.255.255.192 Loopback 3
+ip route 0.0.0.0 0.0.0.0 Loopback 1
+
+
+
+!
+interface Loopback1
+ ip address 192.168.7.1 255.255.255.192
+!
+interface Loopback3
+ ip address 192.168.7.129 255.255.255.192
+!
+router ospf 7
+ log-adjacency-changes
+ network 10.6.7.0 0.0.0.3 area 0
+ network 192.168.7.0 0.0.0.63 area 7
+ network 192.168.7.128 0.0.0.63 area 7
+!
+ip classless
+ip route 192.168.7.64 255.255.255.192 Loopback1 
+ip route 192.168.7.192 255.255.255.192 Loopback3 
+ip route 0.0.0.0 0.0.0.0 Loopback1 
+!
+end
+
+router ospf 7
+ redistribute rip metric 120 
+ redistribute static metric 10 subnets 
+ redistribute connected subnets 
+ default-information originate
+!
+router rip
+ redistribute ospf 7 metric 5 
+ redistribute static 
+ redistribute connected 
+ network 172.16.0.0
+ default-information originate
+ no auto-summary
+!

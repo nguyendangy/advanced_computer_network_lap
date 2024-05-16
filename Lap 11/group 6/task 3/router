@@ -1,0 +1,285 @@
+Config for router
+int fa0/0
+ipv6 add fc00:6::60/64
+
+int ser0/0/0
+ipv6 add fc00:6:7::1/64
+
+int 0/3/1
+ipv6 add fc00:1:6::2/64
+
+
+hostname R_6
+!
+!
+!
+enable password class
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback1
+ ip address 172.16.61.60 255.255.255.0
+!
+interface Loopback2
+ ip address 172.16.62.60 255.255.255.0
+!
+interface FastEthernet0/0
+ ip address 192.168.6.60 255.255.255.0
+ duplex auto
+ speed auto
+ ipv6 address FC00:6::60/64
+!
+interface FastEthernet0/1
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Serial0/0/0
+ ip address 10.6.7.1 255.255.255.252
+ ipv6 address FC00:6:7::1/64
+ clock rate 64000
+!
+interface Serial0/0/1
+ no ip address
+ shutdown
+!
+interface Serial0/1/0
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial0/3/1
+ ip address 10.1.6.2 255.255.255.252
+ ipv6 address FC00:1:6::2/64
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router rip
+ version 2
+ passive-interface FastEthernet0/0
+ network 10.0.0.0
+ network 172.16.0.0
+ network 192.168.6.0
+ no auto-summary
+!
+ip classless
+ip route 0.0.0.0 0.0.0.0 10.6.7.2 
+!
+ip flow-export version 9
+!
+!
+!
+banner motd ^CGroup L welcome. Unauthorized access to this device is strongly prohibited!^^C
+!
+!
+!
+!
+!
+line con 0
+ password cisco
+ login
+!
+line aux 0
+!
+line vty 0 4
+ password cisco
+ logging synchronous
+ login
+line vty 5 15
+ password cisco
+ logging synchronous
+ login
+!
+!
+!
+end
+
+
+step 15
+ipv6 unicast-routing
+
+step 17
+ipv6 router rip Lab6
+exit
+int fa 0/0
+ipv6 rip Lab6 enable
+
+int lo 1
+ipv6 rip Lab6 enable
+
+int lo 2
+ipv6 rip Lab6 enable
+
+interafce Serial 0/0/0
+ipv6 rip Lab6 enable
+
+interafce Serial 0/3/1
+ipv6 rip Lab6 enable
+
+step 25
+R_L(config)# ipv6 route ::/0 FC00:6:7::1
+yourself?
+not sure?
+ipv6 route ::/0 FC00:7::1
+
+
+step 26
+R_1(config)#interface serial 0/0/1
+thay bangwf 0/3/1
+R_1(config-if)#ipv6 rip Lab6 default-information originate
+
+
+end code: focus on ser0/3/1
+
+hostname R_6
+!
+!
+!
+enable password class
+!
+!
+!
+!
+!
+!
+no ip cef
+ipv6 unicast-routing
+!
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback1
+ ip address 172.16.61.60 255.255.255.0
+ ipv6 rip Lab6 enable 
+!
+interface Loopback2
+ ip address 172.16.62.60 255.255.255.0
+ ipv6 rip Lab6 enable 
+!
+interface FastEthernet0/0
+ ip address 192.168.6.60 255.255.255.0
+ duplex auto
+ speed auto
+ ipv6 address FC00:6::60/64
+ ipv6 rip Lab6 enable 
+!
+interface FastEthernet0/1
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Serial0/0/0
+ ip address 10.6.7.1 255.255.255.252
+ ipv6 address FC00:6:7::1/64
+ ipv6 rip Lab6 enable 
+ clock rate 64000
+!
+interface Serial0/3/1
+ ip address 10.1.6.2 255.255.255.252
+ ipv6 address FC00:1:6::2/64
+ ipv6 rip Lab6 enable 
+ ipv6 rip Lab6 default-information originate
+!
+interface Serial0/1/0
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial0/1/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router rip
+ version 2
+ passive-interface FastEthernet0/0
+ network 10.0.0.0
+ network 172.16.0.0
+ network 192.168.6.0
+ no auto-summary
+!
+ipv6 router rip Lab6
+!
+ip classless
+ip route 0.0.0.0 0.0.0.0 10.6.7.2 
+!
+ip flow-export version 9
+!
+ipv6 route ::/0 FC00:7::1
+!
+!
+banner motd ^CGroup L welcome. Unauthorized access to this device is strongly prohibited!^^C
+!
+!
+!
+!
+!
+line con 0
+ password cisco
+ login
+!
+line aux 0
+!
+line vty 0 4
+ password cisco
+ logging synchronous
+ login
+line vty 5 15
+ password cisco
+ logging synchronous
+ login
+!
+!
+!
+end

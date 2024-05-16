@@ -1,0 +1,112 @@
+step 12
+
+ip route 192.168.6.64 255.255.255.192 Loopback 1
+ip route 192.168.6.192 255.255.255.192 Loopback 3
+ip route 0.0.0.0 0.0.0.0 Loopback 1
+
+
+
+!
+interface Loopback1
+ ip address 192.168.6.1 255.255.255.192
+!
+interface Loopback3
+ ip address 192.168.6.129 255.255.255.192
+!
+router ospf 6
+ log-adjacency-changes
+ network 10.1.6.0 0.0.0.3 area 0
+ network 10.6.7.0 0.0.0.3 area 0
+ network 192.168.6.0 0.0.0.63 area 6
+ network 192.168.6.128 0.0.0.63 area 6
+!
+ip classless
+ip route 192.168.6.64 255.255.255.192 Loopback1 
+ip route 192.168.6.192 255.255.255.192 Loopback3 
+ip route 0.0.0.0 0.0.0.0 Loopback1 
+!
+end
+
+step 21
+R_X(config)#router ospf 6
+R_X(config-router)#redistribute rip metric 100 subnets
+R_X(config-router)#redistribute static metric 10 subnets
+R_X(config-router)#redistribute connected subnets
+R_X(config-router)#default-information originate
+R_X(config-router)#exit
+step 22
+R_X(config)#router rip
+R_X(config-router)#redistribute ospf 6 metric 5
+R_X(config-router)#redistribute static
+R_X(config-router)#redistribute connected
+R_X(config-router)#default-information originate
+R_X(config-router)#exit
+
+code step 21+ 22
+
+router ospf 6
+ log-adjacency-changes
+ redistribute rip metric 120 
+ redistribute static metric 10 subnets 
+ redistribute connected subnets 
+ network 10.1.6.0 0.0.0.3 area 0
+ network 10.6.7.0 0.0.0.3 area 0
+ network 192.168.6.0 0.0.0.63 area 6
+ network 192.168.6.128 0.0.0.63 area 6
+ default-information originate
+!
+router rip
+ redistribute ospf 6 metric 5 
+ redistribute static 
+ redistribute connected 
+ network 172.16.0.0
+ default-information originate
+ no auto-summary
+!
+
+step 23:
+sh ip route
+note: O - OSPF
+ E2 - OSPF external type 2
+ E2 172.16.1.0 [110/20] via 10.2.3.1, 00:05:40, Serial0/3/1
+O E2 172.16.2.0 [110/40] via 10.2.3.1, 00:05:40, Serial0/3/1
+
+step 24
+check area number
+R_X#show ip ospf
+Passive Interfaces:
+
+R_X#show ip ospf interface
+Interfaces Broadcasting OSPF Messages:
+
+R_X#show ip ospf interface
+Administrative Distance of OSPF:
+
+R_X#show ip protocols
+Advertised Networks:
+
+R_X#show ip ospf database
+25. Examine the OSPFv2 Database
+
+General OSPF Database:
+
+R_X#show ip ospf database
+Router LSAs: Information about routers in the OSPF area.
+Network LSAs: Information about networks in the OSPF area.
+Summary LSAs: Information about routes to networks in other areas.
+AS External LSAs: Information about routes to external autonomous systems.
+R_X#show ip ospf database router
+R_X#show ip ospf database network
+R_X#show ip ospf database summary
+R_X#show ip ospf database external
+26. Activate the OSPF Debug Process
+
+R_X#debug ip ospf events
+R_X#debug ip ospf packet
+27. Analyze Messages Exchanged Between Routers
+
+R_X(config-if)#shutdown
+R_X(config-if)#no shutdown
+Clear the Routing Table:
+
+R_X#clear ip route *
