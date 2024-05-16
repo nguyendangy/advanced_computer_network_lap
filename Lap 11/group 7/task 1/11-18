@@ -26,6 +26,7 @@ ip route 0.0.0.0 0.0.0.0 Loopback1
 !
 end
 
+!
 router ospf 7
  redistribute rip metric 120 
  redistribute static metric 10 subnets 
