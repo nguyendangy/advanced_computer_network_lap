@@ -27,6 +27,12 @@ ip route 0.0.0.0 0.0.0.0 Loopback1
 !
 end
 
+step19
+R_X(config)#router RIP
+R_X(config-router)#no auto-summary
+R_X(config-router)#network 172.16.0.0
+R_X(config-router)#exit
+
 step 21
 R_X(config)#router ospf 6
 R_X(config-router)#redistribute rip metric 100 subnets
@@ -42,7 +48,7 @@ R_X(config-router)#redistribute connected
 R_X(config-router)#default-information originate
 R_X(config-router)#exit
 
-code step 21+ 22
+code step 19+ 21+ 22
 
 router ospf 6
  log-adjacency-changes
