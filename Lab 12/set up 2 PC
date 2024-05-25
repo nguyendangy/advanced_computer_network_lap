@@ -1,72 +1,7 @@
+The IP addresses assigned to the interfaces of subsequent computer :
+PC1 : 172.16.X1.X1/24 gate : 172.16.X1.X0
+
+PC2 : 172.16.X2.X2/24 gate : 172.16.X2.X0
 
 
-Name: PC_61
-Net: 6AN_6 (Cisco)
-IP PC_61: 192.168.6.61/24
-fc00:6::61/64
-fe80::61
-Gateway: 192.168.6.60
-fc00:6::60
-
-netsh interface ipv4 set address name="Cisco" source=static address=192.168.6.61
-mask=255.255.255.0 gateway=192.168.6.60
-
-Name: PC_62
-Net: 6AN_6 (Cisco)
-IP PC_62: 192.168.6.62/24
-fc00:6::62/64
-fe80::62
-Gateway: 192.168.6.60
-fc00:6::60/64
-
-netsh interface ipv4 set address name="Cisco" source=static address=192.168.6.62
-mask=255.255.255.0 gateway=192.168.6.60
-no need to use netsh, just use GUI to change ipv4 of the interface of Cisco
-
-fc00:7::70
-
-fc00:1::10
-
-PC_61
-172.16.6.61 / 24
-2001:db8:6::61/64
-fe80::61
-
-IP PC_62: 172.16.6.62 / 24
-2001:db8:6::62/64
-fe80::62
-
-Gateway: 172.16.6.60
-2001:db8:6::60/64
-
-switch
-Name: S_6
-Net: LAN_61
-Interface: VLAN 1
-IP: 172.16.6.69 / 24
-2001:db8:6::69/64
-fe80::69
-Native VLAN: VLAN 1
-Gateway: 172.16.6.60
-2001:db8:6::60/64
-
-
-Router
-Name: R_6
-Net: LAN_L1
-Interface: Fa0/0 (Fa0/2/0 or other connected)
-IP: 172.16.6.60 / 24
-2001:db8:6::60/64
-fe80::60
-Net: WAN_L1
-Interface: Serial 0/0/0 DCE (Serial 0/3/0 or other connected)
-IP: 10.6.7.1/ 30
-2001:db8:6:M::1/64
-fe80::1
-clock rate: 64000
-Net: WAN_L2
-Interface: Serial 0/0/1 DTE (Serial 0/1/0, 0/3/1 or other connected)
-IP: 10.1.6.1/ 30
-2001:db8:1:6::1/64
-fe80::2
-clock rate: not applic
+R_X Fa 0/1 port connected with a straight cable to S_X Fa 0/24 port.
