@@ -1,0 +1,14 @@
+router rip
+version 2
+no auto-summary
+network 172.16.0.0
+network 10.0.0.0
+passive-interface FastEthernet 0/0
+passive-interface FastEthernet 0/1
+end
+
+configure terminal
+ip route 0.0.0.0 0.0.0.0 Serial 0/0/0
+end
+
+write memory

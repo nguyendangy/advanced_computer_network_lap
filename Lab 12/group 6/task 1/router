@@ -1,0 +1,124 @@
+Task 1: Define and Verify Access Lists
+Step 1: Create Standard Numbered Access List for Rules 1 and 2
+
+Login to R_1 or R_7
+
+plaintext
+ code
+telnet 10.1.6.2
+
+Configure the Access List:
+plaintext
+ code
+
+enable
+configure terminal
+access-list 6 remark Denied access to the network LAN_11 from LAN_61
+access-list 6 deny 172.16.61.0 0.0.0.255 log
+access-list 6 permit any
+exit
+
+Apply the Access List to the Appropriate Interface:
+plaintext
+ code
+
+interface FastEthernet0/0 (or the appropriate interface)
+ip access-group 6 out
+end
+
+Verify the Access List:
+plaintext
+ code
+
+show access-lists 6
+show ip interface FastEthernet 0/0
+
+Test the Access List:
+Ping from PC1 (172.16.61.61) to a host in LAN_Y1 (172.16.Y1.0/24).
+Ping from PC2 (172.16.62.62) to a host in LAN_Y1 (172.16.Y1.0/24).
+
+Step 2: Create Standard Named Access List for Rules 3 and 4
+
+Login to R_Y:
+
+plaintext
+  code
+
+telnet 10.1.6.2
+
+Configure the Named Access List:
+plaintext
+  code
+
+enable
+configure terminal
+ip access-list standard LSTD_6
+deny 172.16.62.0 0.0.0.255 log
+deny 172.16.63.0 0.0.0.255 log
+permit any
+exit
+
+Apply the Access List to the Appropriate Interface:
+plaintext
+  code
+
+interface FastEthernet0/0 (or the appropriate interface)
+ip access-group LSTD_6 out
+end
+
+Verify the Access List:
+plaintext
+  code
+
+show access-lists LSTD_6
+show ip interface FastEthernet 0/0
+Test the Access List:
+
+Ping from PC1 (172.16.61.61) to a host in LAN_Y3 (172.16.Y3.0/24).
+Ping from PC2 (172.16.62.62) to a host in LAN_Y3 (172.16.Y3.0/24).
+
+Step 3: Modify Named Access List LSTD_6 for Additional Rules
+
+Login to R_Y:
+
+plaintext
+  code
+
+telnet 10.1.6.2
+
+Modify the Access List:
+
+plaintext
+  code
+
+enable
+configure terminal
+ip access-list standard LSTD_6
+no 10
+no 20
+10 permit 172.16.61.0 0.0.0.15 log
+20 deny 172.16.61.0 0.0.0.255 log
+30 deny host 172.16.62.12 log
+40 permit 172.16.62.0 0.0.0.255 log
+50 deny 172.16.63.0 0.0.0.255 log
+60 permit any
+end
+
+Verify the Access List:
+plaintext
+  code
+
+show access-lists LSTD_6
+show ip interface FastEthernet 0/0
+
+Test the Access List:
+Ping from PC1 (172.16.61.61) to a host in LAN_Y3 (172.16.Y3.0/24).
+Ping from PC2 (172.16.62.62) to a host in LAN_Y3 (172.16.Y3.0/24).
+Ping from other PCs in LAN_X1, LAN_X2, and LAN_X3 to hosts in LAN_Y3.
+
+Check the Hits in the Access List:
+plaintext
+  code
+  
+show access-lists
+show access-lists LSTD_6

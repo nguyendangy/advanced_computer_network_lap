@@ -1,0 +1,167 @@
+tren lop kết nối với nhóm 1 bằng 0/3/1
+còn nhóm 1 kết nối bằng port 0/3/0
+
+enable
+write erase
+reload
+
+enable
+configure terminal
+hostname R_6
+service password-encryption
+banner motd #Authorized Access Only!#
+
+enable password class
+
+line con 0
+password cisco
+login
+logging synchronous
+exit
+
+line vty 0 4
+password cisco
+login
+logging synchronous
+exit
+
+no ip domain-lookup
+end
+write memory
+
+configure terminal
+
+interface FastEthernet 0/0
+description LAN_61
+ip address 172.16.61.60 255.255.255.0
+no shutdown
+exit
+
+interface FastEthernet 0/1
+description LAN_62
+ip address 172.16.62.60 255.255.255.0
+no shutdown
+exit
+
+interface Loopback 3
+ip address 172.16.63.60 255.255.255.0
+no shutdown
+exit
+
+interface Serial 0/0/0
+description Connection to Right Router (R_7)
+ip address 10.6.7.1 255.255.255.252
+clock rate 128000
+no shutdown
+exit
+
+interface Serial 0/3/1
+description Connection to Left Router (R_1)
+ip address 10.1.6.1 255.255.255.252
+no shutdown
+exit
+
+end
+write memory
+
+
+hostname R_6
+!
+!
+!
+enable password 7 0822404F1A0A
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback3
+ ip address 172.16.63.60 255.255.255.0
+!
+interface FastEthernet0/0
+ description LAN_61
+ ip address 172.16.61.60 255.255.255.0
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ description LAN_62
+ ip address 172.16.62.60 255.255.255.0
+ duplex auto
+ speed auto
+!
+interface Serial0/0/0
+ description Connection to Right Router (R_7)
+ ip address 10.6.7.1 255.255.255.252
+ clock rate 128000
+!
+interface Serial0/3/1
+ description Connection to Left Router (R_1)
+ ip address 10.1.6.1 255.255.255.252
+!
+interface Serial0/1/0
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Serial0/1/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+!
+banner motd ^CAuthorized Access Only!^C
+!
+!
+!
+!
+!
+line con 0
+ password 7 0822455D0A16
+ logging synchronous
+ login
+!
+line aux 0
+!
+line vty 0 4
+ password 7 0822455D0A16
+ logging synchronous
+ login
+line vty 5 15
+ login
+!
+!
+!
+end
