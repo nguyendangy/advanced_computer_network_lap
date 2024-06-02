@@ -1,0 +1,107 @@
+remember no shut in vlan1, all int in swtich and router
+
+interface Loopback 3
+ip address 192.168.63.60 255.255.255.0
+no shutdown
+
+interface Loopback 4
+ip address 192.168.64.60 255.255.255.0
+no shutdown
+
+!
+router rip
+ version 2
+ network 10.0.0.0
+ network 192.168.61.0
+ network 192.168.62.0
+ network 192.168.63.0
+ network 192.168.64.0
+ no auto-summary
+!
+end 
+
+
+Step 16: telnet from pc 61 to R_7 and ping below:
+R_7#ping 192.168.61.61 source 192.168.71.70
+R_7#ping 192.168.62.62 source 192.168.72.70
+R_7#ping 192.168.63.60 source 192.168.73.70
+R_7#ping 192.168.64.60 source 192.168.74.70
+
+
+
+
+remove int that if need:
+
+enable
+configure terminal
+!
+no interface Loopback 3
+!
+no interface Loopback 4
+!
+router rip
+no network 192.168.63.0
+no network 192.168.64.0
+!
+end
+write memory
+
+step 18:
+!
+access-list 106 remark denied access from 61 to 71
+access-list 106 deny ip 192.168.61.0 0.0.0.255 192.168.71.0 0.0.0.255
+access-list 106 permit ip any any
+!
+interface FastEthernet 0/0
+ip access-group 106 in
+end
+write memory
+
+sh access-lists
+
+ Step 23
+ Edition of an extended, numbered access list
+23. Add additional rules to the created access list.
+Rules to add:
+Deny access from network X2 to network Y1.
+Deny access from network X1 to network Y2.
+Allow other traffic.
+
+conf t 
+access-list 106 remark denied access from 62 to 71
+access-list 106 deny ip 192.168.62.0 0.0.0.255 192.168.71.0 0.0.0.255
+access-list 106 remark denied access from 61 to 72
+access-list 106 deny ip 192.168.61.0 0.0.0.255 192.168.72.0 0.0.0.255
+
+remember that remove this line first, then its will working, or move that in the last list:
+access-list 106 permit ip any any
+
+check access list in sh run:
+sh run | include access-list 106
+
+Before:
+sh run | include access-list 106
+R_6#sh run | include access-list 106
+access-list 106 remark denied access from 61 to 71
+access-list 106 deny ip 192.168.61.0 0.0.0.255 192.168.71.0 0.0.0.255
+access-list 106 permit ip any any
+access-list 106 remark denied access from 62 to 71
+access-list 106 deny ip 192.168.62.0 0.0.0.255 192.168.71.0 0.0.0.255
+access-list 106 remark denied access from 61 to 72
+access-list 106 deny ip 192.168.61.0 0.0.0.255 192.168.72.0 0.0.0.255
+interface Fa 0/0
+no ip access-group 6 in (---?)
+no access-list 106
+
+
+After:
+no access-list 106
+access-list 106 remark denied access from 61 to 71
+access-list 106 deny ip 192.168.61.0 0.0.0.255 192.168.71.0 0.0.0.255
+access-list 106 remark denied access from 62 to 71
+access-list 106 deny ip 192.168.62.0 0.0.0.255 192.168.71.0 0.0.0.255
+access-list 106 remark denied access from 61 to 72
+access-list 106 deny ip 192.168.61.0 0.0.0.255 192.168.72.0 0.0.0.255
+access-list 106 permit ip any any
+interface Fa 0/0
+access-group 106 in

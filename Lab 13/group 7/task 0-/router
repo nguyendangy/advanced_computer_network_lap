@@ -1,0 +1,41 @@
+enable
+configure terminal
+hostname R_7
+
+line console 0
+password cisco
+login
+logging synchronous
+
+enable password class
+
+line vty 0 4
+password cisco
+login
+logging synchronous
+
+no ip domain-lookup
+
+banner motd # Group 7 welcome. Unauthorized access to this device is strongly prohibited!#
+
+interface FastEthernet 0/0
+ip address 192.168.71.70 255.255.255.0
+no shutdown
+
+interface FastEthernet 0/1
+ip address 192.168.72.70 255.255.255.0
+no shutdown
+
+!
+interface Serial0/0/1
+ ip address 10.6.7.2 255.255.255.252
+ no shutdown
+!
+
+
+end
+write memory
+
+
+ping 192.168.61.61
+ping 192.168.61.69

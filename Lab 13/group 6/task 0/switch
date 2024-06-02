@@ -1,0 +1,47 @@
+erase startup-config
+delete vlan.dat
+Switch(config)#sdm prefer dual-ipv4-and-ipv6 default
+Switch(config)#exit
+Switch#copy run start
+Switch#reload
+
+enable
+configure terminal
+hostname S_6
+
+line console 0
+password cisco
+login
+logging synchronous
+
+enable password class
+
+line vty 0 15
+password cisco
+login
+logging synchronous
+
+no ip domain-lookup
+
+banner motd # Group 6 welcome. Unauthorized access to this device is strongly prohibited!#
+
+interface vlan 61
+ip address 192.168.61.69 255.255.255.0
+ipv6 address fc00:61::69/64
+no shutdown
+
+interface vlan 62
+ip address 192.168.62.69 255.255.255.0
+ipv6 address fc00:62::69/64
+no shutdown
+
+interface range Fa 0/1 , Fa 0/23
+switchport mode access
+switchport access vlan 61
+
+interface range Fa 0/11 , Fa 0/21
+switchport mode access
+switchport access vlan 62
+
+end
+write memory

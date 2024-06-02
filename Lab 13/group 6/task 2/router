@@ -1,0 +1,85 @@
+
+remove task 1 or not ?
+
+Step 10:
+enable
+configure terminal
+
+! 
+ip access-list extended ACLE_6
+remark Deny access from network 62 to network 71
+deny ip 192.168.62.0 0.0.0.255 192.168.71.0 0.0.0.255
+remark Deny access from network 61 to network 73
+deny ip 192.168.61.0 0.0.0.255 192.168.73.0 0.0.0.255
+remark Deny access from network 62 to network 73
+deny ip 192.168.62.0 0.0.0.255 192.168.73.0 0.0.0.255
+remark Allow other traffic
+permit ip any any
+
+! 
+interface FastEthernet 0/0  
+ip access-group ACLE_6 in
+
+end
+write memory
+
+if want to remove:
+interface FastEthernet 0/0 
+no ip access-group ACLE_6 in
+exit
+no ip access-list extended ACLE_6
+
+
+Step 14:
+enable
+configure terminal
+
+! 
+ip access-list extended ACLE_LOOP
+remark Deny access from network 63 to network 73
+deny ip 192.168.63.0 0.0.0.255 192.168.73.0 0.0.0.255
+remark Deny access from network 63 to network 74
+deny ip 192.168.63.0 0.0.0.255 192.168.74.0 0.0.0.255
+remark Allow other traffic
+permit ip any any
+!
+interface FastEthernet 0/0 
+ip access-group ACLE_LOOP in
+!
+end 
+
+Step 16:
+
+enable
+configure terminal
+
+! 
+ip access-list extended ACLE_LOOP
+remark Deny access from network 63 to network 73
+deny ip 192.168.63.0 0.0.0.255 192.168.73.0 0.0.0.255
+remark Deny access from network 63 to network 74
+deny ip 192.168.63.0 0.0.0.255 192.168.74.0 0.0.0.255
+remark Deny access from network 64 to networks 73 and 74
+deny ip 192.168.64.0 0.0.0.255 192.168.73.0 0.0.0.255
+deny ip 192.168.64.0 0.0.0.255 192.168.74.0 0.0.0.255
+remark Allow access from PC_62  to FTP service on network 72 
+permit tcp host 192.168.62.62 192.168.72.0 0.0.0.255 eq ftp
+remark Allow access from networks 62, 63, 64 to WWW service on network 72
+permit tcp 192.168.62.0 0.0.0.255 192.168.72.0 0.0.0.255 eq www
+permit tcp 192.168.63.0 0.0.0.255 192.168.72.0 0.0.0.255 eq www
+permit tcp 192.168.64.0 0.0.0.255 192.168.72.0 0.0.0.255 eq www
+remark Deny access from networks 62, 63, 64 to network 72 for other services
+deny ip 192.168.62.0 0.0.0.255 192.168.72.0 0.0.0.255
+deny ip 192.168.63.0 0.0.0.255 192.168.72.0 0.0.0.255
+deny ip 192.168.64.0 0.0.0.255 192.168.72.0 0.0.0.255
+remark Allow other traffic
+permit ip any any
+
+!
+interface FastEthernet 0/0 
+ip access-group ACLE_LOOP in
+
+end
+write memory
+
+

@@ -1,0 +1,48 @@
+Step 12:
+enable
+configure terminal
+
+! 
+ip access-list standard ACL6_VTY
+remark Allow all hosts from the 61 network to access the R_6 router
+permit 192.168.61.0 0.0.0.255
+remark Allow all hosts from the 62 network to access the R_6 router
+permit 192.168.62.0 0.0.0.255
+remark Allow the host fc00:72::72 to access R_6 router
+permit ipv6 host fc00:72::72
+remark Deny access from other addresses
+deny any
+
+! 
+line vty 0 4
+access-class ACL6_VTY in
+
+end
+write memory
+
+Check step
+
+Remove old and create new one:
+no ip access-list standard ACL6_VTY
+Step 15:
+enable
+configure terminal
+
+!
+ip access-list extended ACL6_VTY
+remark Allow the hosts from the 61 network to access the S_6 switch
+permit ip 192.168.61.0 0.0.0.255
+remark Allow the hosts from the 62 network to access the S_6 switch
+permit ip 192.168.62.0 0.0.0.255
+remark Allow host fc00:72::72 to access the S_6 switch
+permit ipv6 host fc00:72::72
+remark Deny access from other addresses
+deny ip any any
+
+!
+line vty 0 15
+access-class ACL6_VTY in
+
+end
+write memory
+

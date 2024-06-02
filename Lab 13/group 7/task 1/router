@@ -1,0 +1,19 @@
+interface Loopback 3
+ip address 192.168.73.70 255.255.255.0
+no shutdown
+!
+interface Loopback 4
+ip address 192.168.74.70 255.255.255.0
+no shutdown
+
+!
+router rip
+ version 2
+ network 10.0.0.0
+ network 192.168.71.0
+ network 192.168.72.0
+ network 192.168.73.0
+ network 192.168.74.0
+ no auto-summary
+!
+end 
