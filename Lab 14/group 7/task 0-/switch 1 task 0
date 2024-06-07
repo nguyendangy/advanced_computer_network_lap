@@ -1,0 +1,37 @@
+erase startup-config
+delete vlan.dat
+Switch(config)#sdm prefer dual-ipv4-and-ipv6 default
+Switch(config)#exit
+Switch#copy run start
+Switch#reload
+
+enable
+configure terminal
+hostname S_7
+
+line console 0
+password cisco
+login
+logging synchronous
+
+enable password class
+
+line vty 0 15
+password cisco
+login
+logging synchronous
+
+no ip domain-lookup
+
+banner motd # Group 7 welcome. Unauthorized access to this device is strongly prohibited!#
+
+interface vlan 1
+ip address 192.168.7.79 255.255.255.0
+ipv6 address fc00:7::79/64
+no shutdown
+
+end
+write memory
+
+
+code:

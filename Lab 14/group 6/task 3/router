@@ -1,0 +1,88 @@
+Step 8;
+Configure the Looback 0 interface with IPv6 address fc00:L:L::L/64.
+
+interface Loopback 0
+ipv6 address fc00:6:6::6/64
+no shutdown
+
+Step 9
+ipv6 unicast-routing
+ipv6 router ospf 6
+router-id 6.6.6.6
+exit
+interface Serial 0/0/0
+ipv6 ospf 6 area 0
+exit
+interface Serial 0/3/1
+ipv6 ospf 6 area 0
+exit
+interface Loopback 0
+ipv6 ospf 6 area 0
+end
+
+Step 10: Checking
+show ipv6 ospf neighbor
+Step 11:
+show ipv6 route
+R_X#ping {remote routers addresses}
+R_X#ping fc00:N1:N2::1 or 2
+…
+PC_X1 C:\Users\Adm>ping fc00:K::K0 (may not work)
+PC_X2 C:\Users\Adm>ping fc00:7::70 (may not work)
+
+Step 12: Checking
+Log in to neighboring routers and check the availability of your networks in its routing tables.
+R_X#telnet fc00:K:L::1
+R_X#telnet fc00:L:M::2
+…
+R_K#show ipv6 route
+R_M#show ipv6 route
+
+GRE tunel configuration
+Step 13:
+code
+no interface tunnel 67
+
+Configure GRE Tunnel on R_X:
+interface tunnel 67
+ip address 192.168.67.1 255.255.255.252
+tunnel source GigabitEthernet0/0
+tunnel destination fc00:7:7::7
+tunnel mode gre ipv6
+
+Configure GRE Tunnel on R_Y:
+interface tunnel 67
+ip address 192.168.67.2 255.255.255.252
+tunnel source GigabitEthernet0/0
+tunnel destination fc00:6:6::6
+unnel mode gre ipv6
+
+Step 18: Verify GRE Tunnel
+R_X#show ipv6 interface brief
+R_X#show ipv6 interface tunnel XY
+R_X#traceroute 192.168.XY.2
+
+Step 21
+R_X
+router rip
+version 2
+no auto-summary
+network 192.168.X.0
+network 192.168.XY.0
+
+R_Y
+router rip
+version 2
+no auto-summary
+network 192.168.X.0
+network 192.168.XY.0
+
+Checking
+R_X#show ip route
+R_Y#show ip route
+PC_X1> ping 192.168.Y.Y1
+PC_X2> ping 192.168.Y.Y2
+
+PC_X1> tracert 192.168.Y.Y1
+PC_X2> tracert 192.168.Y.Y2
+

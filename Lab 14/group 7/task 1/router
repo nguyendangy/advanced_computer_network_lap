@@ -1,0 +1,27 @@
+step 11 +step 12:
+
+interface Loopback 0
+ip address 192.7.7.7 255.255.255.255
+no shutdown
+exit
+
+router ospf 7
+network 10.6.7.2 0.0.0.0 area 0
+network 192.7.7.7 0.0.0.0 area 0
+end
+
+step 18 in R_X
+
+interface tunnel 67
+ip address 192.168.67.1 255.255.255.252
+tunnel source s0/0/0 
+tunnel destination 10.6.7.2 
+end
+
+step 19: in R_Y
+
+interface tunnel 67
+ip address 192.168.67.2 255.255.255.252
+tunnel source s0/0/1 
+tunnel destination 10.6.7.1 
+end

@@ -1,0 +1,145 @@
+Task 1: GRE Tunnel Configuration for IPv4 in IPv4 Encapsulation
+Base Router Configuration
+
+plaintext
+Copy code
+erase startup-config
+reload
+
+configure terminal
+hostname R_6
+line console 0
+password cisco
+login
+exit
+enable password class
+line vty 0 15
+password cisco
+login
+exit
+no ip domain-lookup
+banner motd #Group 6 welcome. Unauthorized access to this device is strongly prohibited!#
+
+interface FastEthernet 0/0
+ip address 192.168.6.0 255.255.255.0
+no shutdown
+
+interface Serial 0/0/0
+ip address 10.6.7.1 255.255.255.252
+clock rate 128000
+no shutdown
+
+interface Serial 0/0/1
+ip address 10.5.6.2 255.255.255.252
+no shutdown
+
+end
+show ip interface brief
+
+configure terminal
+router ospf 6
+network 10.5.6.0 0.0.0.3 area 0
+network 10.6.7.0 0.0.0.3 area 0
+network 192.168.6.0 0.0.0.255 area 0
+end
+
+configure terminal
+interface tunnel 6
+ip address 192.168.66.1 255.255.255.252
+tunnel source Serial 0/0/0
+tunnel destination 10.7.6.2
+end
+Base Switch Configuration
+
+plaintext
+Copy code
+erase startup-config
+delete vlan.dat
+reload
+
+configure terminal
+hostname S_6
+line console 0
+password cisco
+login
+exit
+enable password class
+line vty 0 15
+password cisco
+login
+exit
+
+interface vlan 1
+ip address 192.168.6.9 255.255.255.0
+no shutdown
+end
+
+ping 192.168.6.1
+ping 192.168.6.2
+Task 2: Tunneling of IPv6 Network in an IPv4 Network
+Configure IPv6 Addressing on PCs and Switch:
+plaintext
+Copy code
+configure terminal
+interface vlan 1
+ipv6 address fc00:6::9/64
+no shutdown
+end
+Configure OSPFv2 and GRE Tunnel for IPv6 over IPv4:
+plaintext
+Copy code
+configure terminal
+ipv6 unicast-routing
+interface tunnel 6
+ipv6 address fc00:6:7::1/64
+tunnel source Serial 0/0/0
+tunnel destination 10.7.6.2
+end
+Configure RIPng on Both Ends:
+plaintext
+Copy code
+configure terminal
+ipv6 router rip lab6
+exit
+interface Tunnel 6
+ipv6 rip lab6 enable
+interface FastEthernet 0/0
+ipv6 rip lab6 enable
+end
+Task 3: Tunneling of IPv4 Networks in an IPv6 Network
+Configure IPv6 Addressing and OSPFv3:
+plaintext
+Copy code
+configure terminal
+interface Loopback 0
+ipv6 address fc00:6:6::6/64
+no shutdown
+exit
+ipv6 unicast-routing
+ipv6 router ospf 6
+router-id 6.6.6.6
+exit
+interface Serial 0/0/0
+ipv6 ospf 6 area 0
+end
+Configure GRE Tunnel for IPv4 over IPv6:
+plaintext
+Copy code
+configure terminal
+interface tunnel 6
+ip address 192.168.66.1 255.255.255.252
+tunnel source Serial 0/0/0
+tunnel destination fc00:7:6::2
+tunnel mode gre ipv6
+end
+Configure RIP on Both Ends:
+plaintext
+Copy code
+configure terminal
+router rip
+version 2
+no auto-summary
+network 192.168.6.0
+network 192.168.66.0
+end
+These commands can be copied and pasted directly into the CLI of your devices. Adjust interface names and IP addresses as necessary for your specific lab environment.
