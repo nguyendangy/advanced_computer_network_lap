@@ -1,0 +1,7 @@
+The IP addresses assigned to the interfaces of subsequent computer :
+PC1 : 172.16.X1.X1/24 gate : 172.16.X1.X0
+
+PC2 : 172.16.X2.X2/24 gate : 172.16.X2.X0
+
+
+R_X Fa 0/1 port connected with a straight cable to S_X Fa 0/24 port.

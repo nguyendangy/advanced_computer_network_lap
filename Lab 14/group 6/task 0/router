@@ -1,53 +1,146 @@
-
-after erase and reload
-Config for router
-
-R_X(config)#ipv6 unicast-routing
-
-S_X(config)#ipv6 route ::/0 fc00:6::60
-
-
 enable
 configure terminal
 hostname R_6
-
+banner motd #Unauthorized access is prohibited#
+enable password class
 line console 0
 password cisco
 login
 logging synchronous
-
-enable password class
-
+exit
 line vty 0 4
 password cisco
 login
 logging synchronous
-
+exit
 no ip domain-lookup
-
-banner motd # Group 6 welcome. Unauthorized access to this device is strongly prohibited!#
-
-interface FastEthernet 0/0
-ip address 192.168.6.60 255.255.255.0
-ipv6 address fc00:6::60/64
-no shutdown
-
-!
-interface Serial0/0/0
- ip address 10.6.7.1 255.255.255.252
- ipv6 address fc00:6:7::1/64
- clock rate 128000
- no shutdown
-!
-
-interface Serial0/3/1
- ip address 10.1.6.1 255.255.255.252
- ipv6 address fc00:1:6::1/64
- no shutdown
-!
-
-
 end
 write memory
 
 
+Configure Network Interfaces:
+
+configure terminal
+interface fa 0/0
+ip address 172.16.6.60 255.255.255.0
+no shutdown
+exit
+interface fa 0/1
+ip address 172.16.106.60 255.255.255.0
+no shutdown
+exit
+interface loopback 3
+ip address 172.16.63.60 255.255.255.0
+no shutdown
+end
+write memory
+
+Configure WAN Interface:
+
+configure terminal
+interface serial 0/0/0
+ip address 10.6.7.1 255.255.255.0
+clock rate 64000
+no shutdown
+exit
+end
+write memory
+
+Step 2: Configure Dynamic Routing RIP v.2
+Enable RIP v.2:
+
+Enter the router configuration mode:
+configure terminal
+router rip
+version 2
+no auto-summary
+network 172.16.0.0
+network 10.0.0.0
+passive-interface fa 0/0
+passive-interface fa 0/1
+end
+write memory
+Configure the default route:
+configure terminal
+ip route 0.0.0.0 0.0.0.0 serial 0/0/0
+end
+write memory
+Enable HTTP Service:
+
+configure terminal
+ip http server
+end
+write memory
+
+
+code all:
+enable
+configure terminal
+hostname R_6
+banner motd #Unauthorized access is prohibited#
+enable password class
+line console 0
+password cisco
+login
+logging synchronous
+exit
+line vty 0 4
+password cisco
+login
+logging synchronous
+exit
+no ip domain-lookup
+end
+write memory
+
+configure terminal
+interface fa 0/0
+ip address 172.16.6.60 255.255.255.0
+no shutdown
+exit
+interface fa 0/1
+ip address 172.16.106.60 255.255.255.0
+no shutdown
+exit
+interface loopback 3
+ip address 172.16.63.60 255.255.255.0
+no shutdown
+end
+write memory
+
+configure terminal
+interface serial 0/0/0
+ip address 10.6.7.1 255.255.255.0
+clock rate 64000
+no shutdown
+exit
+end
+write memory
+
+configure terminal
+router rip
+version 2
+no auto-summary
+network 172.16.0.0
+network 10.0.0.0
+passive-interface fa 0/0
+passive-interface fa 0/1
+end
+write memory
+
+configure terminal
+ip route 0.0.0.0 0.0.0.0 serial 0/0/0
+end
+write memory
+
+configure terminal
+ip http server
+end
+write memory
+
+
+testing
+From PC1, ping the router, switch, and other PCs to verify connectivity:
+
+ping 172.16.6.60
+ping 172.16.6.69

@@ -1,6 +1,6 @@
 enable
 configure terminal
-hostname S_7
+hostname S_1
 banner motd #Unauthorized access is prohibited#
 enable password class
 line console 0
@@ -15,9 +15,9 @@ logging synchronous
 exit
 no ip domain-lookup
 interface vlan 1
-ip address 172.16.7.79 255.255.255.0
+ip address 172.16.1.19 255.255.255.0
 no shutdown
 exit
-ip default-gateway 172.16.7.70
+ip default-gateway 172.16.1.10
 end
 write memory

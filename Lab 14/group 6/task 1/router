@@ -1,50 +1,98 @@
-step 11 +step 12:
-
-interface Loopback 0
-ip address 192.6.6.6 255.255.255.255
-no shutdown
+conf t
+ip nat inside source static 172.16.6.61 10.6.7.61
+interface fa0/0
+ip nat inside
+exit
+interface serial 0/0/0
+ip nat outside
 exit
 
-router ospf 6
-network 10.1.6.0 0.0.0.3 area 0
-network 10.6.7.1 0.0.0.0 area 0
-network 192.6.6.6 0.0.0.0 area 0
-end
+
+show ip nat translation
+debug ip nat
+
+Ping from R_Y to 10.6.7.61:
+From R_Y:
+R_7#ping 10.6.7.61
+
+Check the NAT Table on R_6:
+show ip nat translation
+
+Ping from R_6 to R_Y:
+ping 10.6.7.2
+
+Check the NAT Table on R_6:
+show ip nat translation
+
+Ping and Telnet from PC1 to R_Y:
+ping 10.6.7.2
+telnet 10.6.7.2
+
+Check the NAT Table on R_6:
+R_6#show ip nat translation
+
+Check if PC2 Can Connect to R_Y:
+ping 10.6.7.2
+
+section2:
+Dynamic NAT Configuration
+Add Route to Public Address on R_Y:
+R_7 conf t
+ip route 192.168.6.0 255.255.255.0 10.6.7.1
+Define Public Address Pool on R_6:
+R_6(config)#
+ip nat pool PUBLIC_R_6 192.168.6.61 192.168.6.62 netmask 255.255.255.0
+
+Create Access List for Local Networks:
+R_6(config)#
+ip access-list standard NAT_LAN_6
+permit 172.16.6.0 0.0.0.255
+permit 172.16.106.0 0.0.0.255
+exit
+
+Activate Dynamic NAT:R_6(config)
+ip nat inside source list NAT_LAN_6 pool PUBLIC_R_6
+
+Clear Previous NAT Translations and Statistics:
+clear ip nat translation *
+clear ip nat statistics
+
+Remove Static NAT:
+no ip nat inside source static 172.16.6.61 10.6.7.61
+
+Step 2: Verify Dynamic NAT
+Ping from PC1 and PC2 to R_Y:
+From PC1 and PC2:
+ping 10.6.7.2
+
+Check NAT Translations and Statistics on R_6:
+show ip nat translations
+show ip nat statistics
+debug ip nat
+
+Check the Effect of a Third Device Trying to Connect:
+Change IP on PC2 temporarily to 172.16.6.63.
+Attempt to ping from PC2 to R_Y:
+ping 10.6.7.2
+Verify that the third device does not get a public IP address.
+
+Clear NAT Tables and Verify Pings:
+R_6#clear ip nat translation *
+
+Verify ping from R_7:
+R_7#ping 192.168.6.61 expect 0/5
+
+Purpose of Static NAT:
+Static NAT is used to map a single internal IP address to a single
+ external IP address. This allows devices on an external network 
+ to access a specific internal device using a fixed external IP address.
+Purpose of Dynamic NAT:
+Dynamic NAT maps internal IP addresses to a pool of external
+ IP addresses. This is useful when you have more internal devices
+  than available external IP addresses, and not all internal devices
+   need simultaneous access to the external network.
 
 
-step 18 in R_X
 
-interface tunnel 67
-ip address 192.168.67.1 255.255.255.252
-tunnel source s0/0/0 
-tunnel destination 10.6.7.2 
-end
 
-step 19: in R_Y
-
-interface tunnel 67
-ip address 192.168.67.2 255.255.255.252
-tunnel source s0/0/1 
-tunnel destination 10.6.7.1 
-end
-
-step 23: R_X
-
-router rip
-version 2
-no auto-summary
-network 192.168.6.0
-network 192.168.67.0
-end
-
-R_Y
-router RIP
-version 2
-no auto-summary
-network 192.168.7.0
-network 192.168.67.0
-end
-
-checking:
-not working in S_X to S_Y
 

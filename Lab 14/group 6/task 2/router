@@ -1,75 +1,46 @@
-step 10:
+Step 1: Remove Previous Dynamic NAT Translation
+R_X(config)#no ip nat inside source list NAT_LAN_X pool PUBLIC_R_X
 
-router ospf 6
-network 10.1.6.0 0.0.0.3 area 0
-network 10.6.7.1 0.0.0.0 area 0
-network 192.6.6.6 0.0.0.0 area 0
-end
+Step 2: Configure NAT Overload (PAT) Using the Serial Interface Address
 
-step 17:
- in R_X
-
-interface tunnel 67
-ipv6 address fc00:6:7::1/64
-tunnel source s0/0/0 
-tunnel destination 10.6.7.2 
-end
-
-step 18
-in R_Y
-
-interface tunnel 67
-ipv6 address fc00:6:7::2/64
-tunnel source s0/0/1 
-tunnel destination 10.6.7.1 
-end
-
-step 19
-show ipv6 route
-in R_X
-ping fc00:6:7::2
-
-Check and save interface properties:
-R_X#show ip interface brief
-R_X#show ip interface Tunnel 67
-R_X#show ipv6 interface brief
-R_X#show ipv6 interface Tunnel 67
-Check and save the route to the other end of the tunnel. Save the number of intermediate hosts.
-R_X#traceroute fc00:6:7::2
-
-RIPng protocol configuration between remote local networks
-step 20:
-PC_X1 C:\Users\Adm>ping fc00:Y::Y1
-PC_X2 C:\Users\Adm>ping fc00:Y::Y2
-…
-PC_X1 C:\Users\Adm>ping fc00:Y::Y2
-PC_X2 C:\Users\Adm>ping fc00:Y::Y2
-step 21
-show ipv6 route
-step 22
-R_X:
-ipv6 unicast-routing
-
-ipv6 router rip lab6
+Create Access List for Local Network:
+ip access-list standard PAT_LAN_6
+permit 172.16.6.0 0.0.0.255
+permit 172.16.106.0 0.0.0.255
 exit
-interface Tunnel XY
-ipv6 rip lab6 enable
-interface Fa 0/0
-ipv6 rip lab6 enable
 
-ipv6 unicast-routing
-ipv6 router rip lab7
-exit
-interface Tunnel 67
-ipv6 rip lab7 enable
-interface Fa 0/0
-ipv6 rip lab7 enable
+Configure NAT Overload:
+ip nat inside source list PAT_LAN_6 interface Serial 0/0/0 overload
 
-step 23:
-PC_X – PC_Y
-R_X – R_Y
-S_X – S_Y
-Check and save the path from PC_X to PC_Y computers.
-PC_X1 C:\Users\Adm>tracert fc00:Y::Y1
-PC_X2 C:\Users\Adm>tracert fc00:Y::Y2
-Save how many intermediate hosts are on the route?
+Verify NAT Operation:
+From PC1 and PC2
+ping 10.6.7.2
+
+Check NAT Translations and Statistics: (R_6)
+show ip nat translations
+show ip nat statistics
+debug ip nat
+
+Remove Previous Static NAT Translation:
+no ip nat inside source list PAT_LAN_6 interface Serial 0/0/0 overload
+
+Step 3: Configure PAT Using Multiple Public IP Addresses
+Define Public Address Pool:
+ip nat pool PUBLIC_PAT_R_6 10.6.7.61 10.6.7.63 netmask 255.255.255.0
+
+Configure PAT with Public Address Pool:
+ip nat inside source list PAT_LAN_6 pool PUBLIC_PAT_R_6 overload
+
+Verify NAT Operation:
+From PC1 and PC2
+ping 10.6.7.2
+
+Check NAT Translations and Statistics: (R_6)
+show ip nat translations
+show ip nat statistics
+debug ip nat
+
+
+
+
+
